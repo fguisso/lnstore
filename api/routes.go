@@ -10,12 +10,14 @@ import (
 type Routes struct {
 	ar *r.AdditionalRepository
 	br *r.BowlRepository
+	or *r.OrderRepository
 }
 
 func NewRoutes() *Routes {
 	return &Routes{
 		ar: r.Mocked.Additionals,
 		br: r.Mocked.Bowls,
+		or: r.Mocked.Orders,
 	}
 }
 
@@ -39,4 +41,15 @@ func (routes *Routes) GetBowls(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	w.Write([]byte(fmt.Sprintf("%v", bowlList)))
+}
+
+func (routes *Routes) GetOrders(w http.ResponseWriter, _ *http.Request) {
+	orderList := routes.or.ListAll()
+
+	if len(orderList) == 0 {
+		w.Write([]byte("Order list empty!"))
+		return
+	}
+
+	w.Write([]byte(fmt.Sprintf("%v", orderList)))
 }

@@ -13,8 +13,8 @@ type Bowl struct {
 }
 
 type Order struct {
-	ID        int32   `json:"id"`
-	Total     float64 `json:"total"`
-	Coin      string  `json:"coin"`
-	LNInvoice string  `json:"ln_invoice"`
+	ID        int32  `json:"id"`
+	Total     int64  `json:"total"`
+	Coin      string `json:"coin"`
+	LNInvoice string `json:"ln_invoice"`
 }

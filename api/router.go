@@ -22,5 +22,9 @@ func NewAPIRouter(routes *Routes) chi.Router {
 		r.Get("/", routes.GetBowls)
 	})
 
+	r.Route("/orders", func(r chi.Router) {
+		r.Get("/", routes.GetOrders)
+	})
+
 	return r
 }
