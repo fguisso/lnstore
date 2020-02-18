@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -20,6 +21,15 @@ func NewRoutes() *Routes {
 		or: r.Mocked.Orders,
 	}
 }
+func writeJSON(w http.ResponseWriter, thing interface{}) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	//w.WriteHeader(code)
+	encoder := json.NewEncoder(w)
+	encoder.SetIndent("", "    ")
+	if err := encoder.Encode(thing); err != nil {
+		fmt.Println("deu ruim")
+	}
+}
 
 func (routes *Routes) GetAdditionals(w http.ResponseWriter, _ *http.Request) {
 	additionalList := routes.ar.ListAll()
@@ -29,7 +39,7 @@ func (routes *Routes) GetAdditionals(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%v", additionalList)))
+	writeJSON(w, additionalList)
 }
 
 func (routes *Routes) GetBowls(w http.ResponseWriter, _ *http.Request) {
@@ -40,7 +50,7 @@ func (routes *Routes) GetBowls(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%v", bowlList)))
+	writeJSON(w, bowlList)
 }
 
 func (routes *Routes) GetOrders(w http.ResponseWriter, _ *http.Request) {
@@ -51,5 +61,5 @@ func (routes *Routes) GetOrders(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("%v", orderList)))
+	writeJSON(w, orderList)
 }
