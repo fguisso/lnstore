@@ -7,13 +7,13 @@ type Additional struct {
 }
 
 type Bowl struct {
-	ID    int64   `json:"id"`
+	ID    int32   `json:"id"`
 	Size  int64   `json:"size"`
 	Price float64 `json:"price"`
 }
 
 type Order struct {
-	ID        int64   `json:"id"`
+	ID        int32   `json:"id"`
 	Total     float64 `json:"total"`
 	Coin      string  `json:"coin"`
 	LNInvoice string  `json:"ln_invoice"`

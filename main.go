@@ -8,7 +8,6 @@ import (
 	"github.com/rs/cors"
 
 	"github.com/fguisso/lnstore/api"
-	repo "github.com/fguisso/lnstore/repositories"
 )
 
 func main() {
@@ -18,14 +17,7 @@ func main() {
 	r.Use(corsMW.Handler)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Route("/", func(r chi.Router) {
-		r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("[{'name': 'granola'}]"))
-		})
-	})
-
-	as := &repo.AdditionalRepository{}
-	routes := api.NewRoutes(as.NewRepository())
+	routes := api.NewRoutes()
 	router := api.NewAPIRouter(routes)
 
 	r.Mount("/api", router)
