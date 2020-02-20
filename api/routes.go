@@ -3,8 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi"
 
@@ -33,6 +35,16 @@ func writeJSON(w http.ResponseWriter, thing interface{}) {
 	if err := encoder.Encode(thing); err != nil {
 		fmt.Println("deu ruim")
 	}
+}
+
+func randomID() string {
+	var safeCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+	rand.Seed(time.Now().UnixNano())
+	id := make([]byte, 28)
+	for i := range id {
+		id[i] = safeCharset[rand.Intn(len(safeCharset))]
+	}
+	return string(id)
 }
 
 func (routes *Routes) GetAdditionals(w http.ResponseWriter, _ *http.Request) {
@@ -70,8 +82,8 @@ func (routes *Routes) GetOrders(w http.ResponseWriter, _ *http.Request) {
 
 func (routes *Routes) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(chi.URLParam(r, "orderID"))
-	orderItem := routes.or.FindByID(int32(id))
-	if orderItem.ID == 0 {
+	orderItem := routes.or.FindByID(string(id))
+	if orderItem.ID == "" {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Order not found!"))
 		return
@@ -81,13 +93,25 @@ func (routes *Routes) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (routes *Routes) CreateOrder(w http.ResponseWriter, r *http.Request) {
+	var newOrderRequest d.OrderRequest
 	var newOrder d.Order
 
-	err := json.NewDecoder(r.Body).Decode(&newOrder)
+	err := json.NewDecoder(r.Body).Decode(&newOrderRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	newOrder.ID = randomID()
+	newOrder.Coin = newOrderRequest.Coin
+	newOrder.LNInvoice = "dcrln10000msdfjlkawhuaskhASDFasdf"
+
+	for _, itemID := range newOrderRequest.Additionals {
+		additional := routes.ar.FindByID(itemID)
+		newOrder.Total += additional.Price
+	}
+
+	bowl := routes.br.FindByID(newOrderRequest.Bowl)
+	newOrder.Total += bowl.Price
 
 	routes.or.Create(newOrder)
 	writeJSON(w, newOrder)

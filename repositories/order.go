@@ -9,7 +9,7 @@ type OrderRepository struct {
 }
 
 var mockOrder = []d.Order{
-	d.Order{ID: 10, Total: 10000000, Coin: "decred", LNInvoice: "testing"},
+	d.Order{ID: "rePpNwCxnVkLOJo29W13vTFqzI39", Total: 10000000, Coin: "decred", LNInvoice: "testing"},
 }
 
 func (or OrderRepository) NewRepository() *OrderRepository {
@@ -22,7 +22,7 @@ func (or OrderRepository) ListAll() []d.Order {
 	return or.db
 }
 
-func (or OrderRepository) FindByID(id int32) d.Order {
+func (or OrderRepository) FindByID(id string) d.Order {
 	for _, item := range or.db {
 		if item.ID == id {
 			return item
