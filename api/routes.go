@@ -4,7 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"github.com/go-chi/chi"
+
+	d "github.com/fguisso/lnstore/domain"
 	r "github.com/fguisso/lnstore/repositories"
 )
 
@@ -62,4 +66,29 @@ func (routes *Routes) GetOrders(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	writeJSON(w, orderList)
+}
+
+func (routes *Routes) GetOrderByID(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.Atoi(chi.URLParam(r, "orderID"))
+	orderItem := routes.or.FindByID(int32(id))
+	if orderItem.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Order not found!"))
+		return
+	}
+
+	writeJSON(w, orderItem)
+}
+
+func (routes *Routes) CreateOrder(w http.ResponseWriter, r *http.Request) {
+	var newOrder d.Order
+
+	err := json.NewDecoder(r.Body).Decode(&newOrder)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	routes.or.Create(newOrder)
+	writeJSON(w, newOrder)
 }

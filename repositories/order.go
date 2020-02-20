@@ -30,3 +30,7 @@ func (or OrderRepository) FindByID(id int32) d.Order {
 	}
 	return d.Order{}
 }
+
+func (or *OrderRepository) Create(newOrder d.Order) {
+	or.db = append(or.db, newOrder)
+}
