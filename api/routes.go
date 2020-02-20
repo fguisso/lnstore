@@ -25,9 +25,9 @@ func NewRoutes() *Routes {
 		or: r.Mocked.Orders,
 	}
 }
+
 func writeJSON(w http.ResponseWriter, thing interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	//w.WriteHeader(code)
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "    ")
 	if err := encoder.Encode(thing); err != nil {
